@@ -36,7 +36,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     });
   }
-
   const isFreeLicense = (await getDeploymentKey(deploymentRepo)) === "";
 
   return {
