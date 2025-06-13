@@ -1164,6 +1164,7 @@ class CalApi {
     type,
     options = {},
     pageType,
+    calOrigin,
   }: {
     calLink: string;
     type?: "modal" | "floatingButton";
@@ -1171,6 +1172,7 @@ class CalApi {
       prerenderIframe?: boolean;
     };
     pageType?: EmbedPageType;
+    calOrigin?: string;
   }) {
     // eslint-disable-next-line prefer-rest-params
     validate(arguments[0], {
@@ -1215,7 +1217,7 @@ class CalApi {
         this.cal.isPrerendering = true;
         this.modal({
           calLink,
-          calOrigin: config.calOrigin,
+          calOrigin: calOrigin || config.calOrigin,
           __prerender: true,
           ...(pageType ? { config: { "cal.embed.pageType": pageType } } : {}),
         });
@@ -1232,15 +1234,18 @@ class CalApi {
     calLink,
     type,
     pageType,
+    calOrigin,
   }: {
     calLink: string;
     type: "modal" | "floatingButton";
     pageType?: EmbedPageType;
+    calOrigin?: string;
   }) {
     this.preload({
       calLink,
       type,
       pageType,
+      calOrigin,
     });
   }
 
