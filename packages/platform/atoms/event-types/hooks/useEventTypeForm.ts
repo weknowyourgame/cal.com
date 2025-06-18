@@ -136,7 +136,14 @@ export const useEventTypeForm = ({
       includeNoShowInRRCalculation: eventType.includeNoShowInRRCalculation,
       useEventLevelSelectedCalendars: eventType.useEventLevelSelectedCalendars,
       customReplyToEmail: eventType.customReplyToEmail || null,
-      calVideoSettings: eventType.calVideoSettings,
+      calVideoSettings: eventType.calVideoSettings || {
+        disableRecordingForGuests: false,
+        disableRecordingForOrganizer: false,
+        enableAutomaticTranscription: false,
+        disableTranscriptionForGuests: false,
+        disableTranscriptionForOrganizer: false,
+        redirectUrlOnExit: null,
+      },
       maxActiveBookingsPerBooker: eventType.maxActiveBookingsPerBooker || null,
       maxActiveBookingPerBookerOfferReschedule: eventType.maxActiveBookingPerBookerOfferReschedule,
     };
@@ -320,6 +327,7 @@ export const useEventTypeForm = ({
       metadata,
       customInputs,
       assignAllTeamMembers,
+      calVideoSettings,
       // We don't need to send send these values to the backend
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       seatsPerTimeSlotEnabled,
@@ -378,6 +386,16 @@ export const useEventTypeForm = ({
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { availability, users, scheduleName, ...rest } = input;
+
+    // Check if there's a Daily location to determine if calVideoSettings should be included
+    const hasCalVideoLocation = (locations || values.locations)?.some(
+      (location: { type: string }) => location.type === "integrations:daily"
+    );
+
+    // Include calVideoSettings if there's a Daily location or if settings were explicitly modified
+    const finalCalVideoSettings =
+      hasCalVideoLocation || calVideoSettings ? calVideoSettings || values.calVideoSettings : undefined;
+
     const payload = {
       ...rest,
       length,
@@ -405,6 +423,7 @@ export const useEventTypeForm = ({
       aiPhoneCallConfig: rest.aiPhoneCallConfig
         ? { ...rest.aiPhoneCallConfig, templateType: rest.aiPhoneCallConfig.templateType as TemplateType }
         : undefined,
+      ...(finalCalVideoSettings && { calVideoSettings: finalCalVideoSettings }),
     } satisfies EventTypeUpdateInput;
     // Filter out undefined values
     const filteredPayload = Object.entries(payload).reduce((acc, [key, value]) => {

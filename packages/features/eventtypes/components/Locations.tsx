@@ -339,7 +339,7 @@ const Locations: React.FC<LocationsProps> = ({
                 )}
               </div>
 
-              {isCalVideo && !isPlatform && (
+              {isCalVideo && (
                 <div className="bg-muted mt-2 space-y-2 rounded-lg p-4">
                   <div className="w-full">
                     <div className="flex flex-col gap-2">
